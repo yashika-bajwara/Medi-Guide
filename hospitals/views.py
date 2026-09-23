@@ -52,92 +52,171 @@ def home(request):
 # ============================================================
 
 def hospital_list(request):
+    hospitals = Hospital.objects.all().order_by("-rating", "name")
 
-    hospitals = Hospital.objects.all()
+    search_query = request.GET.get("q", "").strip()
+    selected_city = request.GET.get("city", "").strip()
+    selected_budget = request.GET.get("budget", "").strip()
+    selected_facility = request.GET.get("facility", "").strip()
+    selected_emergency = request.GET.get("emergency", "").strip()
 
-    query = request.GET.get("q", "").strip()
-    city = request.GET.get("city", "").strip()
-    budget = request.GET.get("budget", "").strip()
-    facility = request.GET.get("facility", "").strip()
-    emergency = request.GET.get("emergency", "").strip()
+    # Main health-problem / treatment search
+    if search_query:
+        query = search_query.lower()
 
-    if query:
+        # Common health-problem keywords mapped to treatments/departments
+        problem_map = {
+            "heart": ["cardiology", "angioplasty", "heart bypass", "pacemaker"],
+            "cardiac": ["cardiology", "angioplasty", "heart bypass", "pacemaker"],
+            "chest pain": ["cardiology", "angioplasty", "heart bypass"],
+            "knee": ["knee replacement", "orthopedics", "fracture"],
+            "joint": ["knee replacement", "orthopedics", "physiotherapy"],
+            "bone": ["orthopedics", "fracture", "knee replacement"],
+            "diabetes": ["diabetes management", "endocrinology"],
+            "sugar": ["diabetes management", "endocrinology"],
+            "kidney": ["kidney stone treatment"],
+            "kidney stone": ["kidney stone treatment"],
+            "stone": ["kidney stone treatment"],
+            "eye": ["cataract surgery"],
+            "cataract": ["cataract surgery"],
+            "skin": ["skin allergy treatment", "acne treatment", "dermatology"],
+            "acne": ["acne treatment"],
+            "fever": ["pediatric fever treatment", "general medicine"],
+            "child": ["pediatric fever treatment"],
+            "children": ["pediatric fever treatment"],
+            "tooth": ["dental root canal", "dental implant"],
+            "teeth": ["dental root canal", "dental implant"],
+            "dental": ["dental root canal", "dental implant"],
+            "breathing": ["asthma management", "pneumonia treatment"],
+            "asthma": ["asthma management"],
+            "pneumonia": ["pneumonia treatment"],
+            "migraine": ["migraine treatment", "neurology"],
+            "headache": ["migraine treatment", "neurology"],
+            "stroke": ["stroke rehabilitation", "neurology"],
+            "thyroid": ["thyroid treatment", "endocrinology"],
+            "blood pressure": ["blood pressure management"],
+            "bp": ["blood pressure management"],
+            "fracture": ["fracture treatment", "orthopedics"],
+            "injury": ["fracture treatment", "orthopedics"],
+            "appendix": ["appendectomy"],
+            "appendicitis": ["appendectomy"],
+            "gallbladder": ["gallbladder surgery"],
+            "hernia": ["hernia repair"],
+            "delivery": ["normal delivery", "cesarean section"],
+            "pregnancy": ["normal delivery", "cesarean section"],
+            "maternity": ["normal delivery", "cesarean section"],
+            "ent": ["ent infection treatment", "tonsil surgery"],
+            "ear": ["ent infection treatment"],
+            "nose": ["ent infection treatment"],
+            "throat": ["ent infection treatment", "tonsil surgery"],
+            "mri": ["mri scan"],
+            "ct": ["ct scan"],
+            "scan": ["mri scan", "ct scan", "ultrasound"],
+            "ultrasound": ["ultrasound"],
+            "physiotherapy": ["physiotherapy"],
+            "therapy": ["physiotherapy"],
+        }
+
+        matching_terms = [query]
+
+        for problem, treatments_list in problem_map.items():
+            if problem in query:
+                matching_terms.extend(treatments_list)
+
+        # Find matching treatments
+        treatment_query = models.Q()
+
+        for term in matching_terms:
+            treatment_query |= (
+                models.Q(name__icontains=term) |
+                models.Q(department__icontains=term)
+            )
+
+        matching_treatments = Treatment.objects.filter(
+            treatment_query
+        ).distinct()
+
+        # Find hospitals offering matching treatments
+        matching_hospital_ids = HospitalTreatment.objects.filter(
+            treatment__in=matching_treatments,
+            available=True
+        ).values_list("hospital_id", flat=True)
+
+        # Also allow direct hospital/city/facility matching
         hospitals = hospitals.filter(
-            models.Q(name__icontains=query)
-            | models.Q(city__icontains=query)
-            | models.Q(area__icontains=query)
-            | models.Q(address__icontains=query)
-            | models.Q(facilities__icontains=query)
-            | models.Q(description__icontains=query)
-            | models.Q(
-                hospitaltreatment__treatment__name__icontains=query
-            )
-            | models.Q(
-                hospitaltreatment__treatment__department__icontains=query
-            )
+            models.Q(id__in=matching_hospital_ids) |
+            models.Q(name__icontains=query) |
+            models.Q(city__icontains=query) |
+            models.Q(area__icontains=query) |
+            models.Q(facilities__icontains=query) |
+            models.Q(description__icontains=query)
+        ).distinct()
+
+    # City filter
+    if selected_city:
+        hospitals = hospitals.filter(city__iexact=selected_city)
+
+    # Facility filter
+    if selected_facility:
+        hospitals = hospitals.filter(
+            facilities__icontains=selected_facility
         )
 
-    if city:
-        hospitals = hospitals.filter(
-            city__icontains=city
-        )
+    # Emergency filter
+    if selected_emergency == "true":
+        hospitals = hospitals.filter(emergency=True)
 
-    if budget:
+    # Budget filter
+    if selected_budget:
         try:
+            budget = float(selected_budget)
+
+            matching_hospital_ids = HospitalTreatment.objects.filter(
+                estimated_cost__lte=budget,
+                available=True
+            ).values_list("hospital_id", flat=True)
+
             hospitals = hospitals.filter(
-                hospitaltreatment__estimated_cost__lte=float(budget)
-            )
+                id__in=matching_hospital_ids
+            ).distinct()
+
         except (ValueError, TypeError):
             pass
 
-    if facility:
-        hospitals = hospitals.filter(
-            facilities__icontains=facility
-        )
+    # Cities
+    cities = Hospital.objects.values_list(
+        "city",
+        flat=True
+    ).distinct().order_by("city")
 
-    if emergency == "true":
-        hospitals = hospitals.filter(
-            emergency=True
-        )
+    # Facilities
+    facilities = set()
 
-    hospitals = hospitals.distinct()
+    for hospital in Hospital.objects.all():
+        if hospital.facilities:
+            for facility in hospital.facilities.split(","):
+                facility = facility.strip()
+                if facility:
+                    facilities.add(facility)
 
-    cities = (
-        Hospital.objects
-        .values_list("city", flat=True)
-        .distinct()
-        .order_by("city")
-    )
+    facilities = sorted(facilities)
 
-    all_hospitals = Hospital.objects.all()
-
-    facility_set = set()
-
-    for hospital in all_hospitals:
-        for item in hospital.facilities.split(","):
-            item = item.strip()
-
-            if item:
-                facility_set.add(item)
-
-    facilities = sorted(facility_set)
+    context = {
+        "hospitals": hospitals,
+        "cities": cities,
+        "facilities": facilities,
+        "search_query": search_query,
+        "selected_city": selected_city,
+        "selected_budget": selected_budget,
+        "selected_facility": selected_facility,
+        "selected_emergency": selected_emergency,
+    }
 
     return render(
         request,
         "hospitals/hospitals.html",
-        {
-            "hospitals": hospitals,
-            "cities": cities,
-            "facilities": facilities,
-            "search_query": query,
-            "selected_city": city,
-            "selected_budget": budget,
-            "selected_facility": facility,
-            "selected_emergency": emergency,
-        }
+        context
     )
-
-
 # ============================================================
 # HOSPITAL DETAIL
 # ============================================================

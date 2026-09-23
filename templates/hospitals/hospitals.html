@@ -13,44 +13,38 @@
 
     <!-- PAGE HEADER -->
     <div class="hospitals-header">
-
         <span class="hospitals-label">
-            <i class="fa-solid fa-hospital"></i>
+            <i class="fa-solid fa-heart-pulse"></i>
             FIND HEALTHCARE
         </span>
 
         <h1>Find the Right Hospital</h1>
 
         <p>
-            Search hospitals by location, treatment, budget,
-            facilities and emergency services.
+            Tell us about your health problem and find suitable hospitals,
+            treatments, costs and healthcare facilities.
         </p>
-
     </div>
 
 
-    <!-- SEARCH AND FILTERS -->
+    <!-- MAIN SEARCH -->
     <div class="hospital-filters">
 
-        <form
-            method="GET"
-            action="{% url 'hospital_list' %}"
-            autocomplete="off"
-        >
+        <form method="GET" action="{% url 'hospital_list' %}" autocomplete="off">
 
-            <!-- SEARCH -->
+            <!-- HEALTH PROBLEM -->
             <div class="filter-group search-group">
 
                 <label>
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    Search
+                    <i class="fa-solid fa-notes-medical"></i>
+                    What health problem or treatment do you need?
                 </label>
 
                 <input
                     type="text"
                     name="q"
                     value="{{ search_query }}"
-                    placeholder="Hospital, treatment, department..."
+                    placeholder="e.g. heart problem, knee pain, diabetes, cataract..."
                     autocomplete="off"
                     autocorrect="off"
                     autocapitalize="off"
@@ -60,167 +54,140 @@
             </div>
 
 
-            <!-- CITY -->
-            <div class="filter-group">
+            <!-- FILTER ROW -->
+            <div class="filter-row">
 
-                <label>
-                    <i class="fa-solid fa-location-dot"></i>
-                    City
-                </label>
+                <!-- CITY -->
+                <div class="filter-group">
 
-                <select name="city">
+                    <label>
+                        <i class="fa-solid fa-location-dot"></i>
+                        Preferred City
+                    </label>
 
-                    <option value="">
-                        All Cities
-                    </option>
+                    <select name="city">
 
-                    {% for city in cities %}
-
-                        <option
-                            value="{{ city }}"
-                            {% if selected_city == city %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ city }}
+                        <option value="">
+                            All Cities
                         </option>
 
-                    {% endfor %}
+                        {% for city in cities %}
 
-                </select>
+                            <option
+                                value="{{ city }}"
+                                {% if selected_city == city %}selected{% endif %}
+                            >
+                                {{ city }}
+                            </option>
 
-            </div>
+                        {% endfor %}
 
+                    </select>
 
-            <!-- BUDGET -->
-            <div class="filter-group">
-
-                <label>
-                    <i class="fa-solid fa-indian-rupee-sign"></i>
-                    Budget
-                </label>
-
-                <select name="budget">
-
-                    <option value="">
-                        Any Budget
-                    </option>
-
-                    <option
-                        value="10000"
-                        {% if selected_budget == "10000" %}
-                            selected
-                        {% endif %}
-                    >
-                        Under ₹10,000
-                    </option>
-
-                    <option
-                        value="25000"
-                        {% if selected_budget == "25000" %}
-                            selected
-                        {% endif %}
-                    >
-                        Under ₹25,000
-                    </option>
-
-                    <option
-                        value="50000"
-                        {% if selected_budget == "50000" %}
-                            selected
-                        {% endif %}
-                    >
-                        Under ₹50,000
-                    </option>
-
-                    <option
-                        value="100000"
-                        {% if selected_budget == "100000" %}
-                            selected
-                        {% endif %}
-                    >
-                        Under ₹1,00,000
-                    </option>
-
-                    <option
-                        value="200000"
-                        {% if selected_budget == "200000" %}
-                            selected
-                        {% endif %}
-                    >
-                        Under ₹2,00,000
-                    </option>
-
-                    <option
-                        value="300000"
-                        {% if selected_budget == "300000" %}
-                            selected
-                        {% endif %}
-                    >
-                        Under ₹3,00,000
-                    </option>
-
-                </select>
-
-            </div>
+                </div>
 
 
-            <!-- FACILITY -->
-            <div class="filter-group">
+                <!-- EMERGENCY -->
+                <div class="filter-group">
 
-                <label>
-                    <i class="fa-solid fa-building-circle-check"></i>
-                    Facility
-                </label>
+                    <label>
+                        <i class="fa-solid fa-truck-medical"></i>
+                        Emergency Care
+                    </label>
 
-                <select name="facility">
+                    <select name="emergency">
 
-                    <option value="">
-                        All Facilities
-                    </option>
-
-                    {% for facility in facilities %}
-
-                        <option
-                            value="{{ facility }}"
-                            {% if selected_facility == facility %}
-                                selected
-                            {% endif %}
-                        >
-                            {{ facility }}
+                        <option value="">
+                            All Hospitals
                         </option>
 
-                    {% endfor %}
+                        <option
+                            value="true"
+                            {% if selected_emergency == "true" %}selected{% endif %}
+                        >
+                            Emergency Available
+                        </option>
 
-                </select>
+                    </select>
 
-            </div>
+                </div>
 
 
-            <!-- EMERGENCY -->
-            <div class="filter-group">
+                <!-- FACILITY -->
+                <div class="filter-group">
 
-                <label>
-                    <i class="fa-solid fa-truck-medical"></i>
-                    Emergency
-                </label>
+                    <label>
+                        <i class="fa-solid fa-building-circle-check"></i>
+                        Additional Facility
+                    </label>
 
-                <select name="emergency">
+                    <select name="facility">
 
-                    <option value="">
-                        All Hospitals
-                    </option>
+                        <option value="">
+                            Any Facility
+                        </option>
 
-                    <option
-                        value="true"
-                        {% if selected_emergency == "true" %}
-                            selected
-                        {% endif %}
-                    >
-                        Emergency Available
-                    </option>
+                        {% for facility in facilities %}
 
-                </select>
+                            <option
+                                value="{{ facility }}"
+                                {% if selected_facility == facility %}selected{% endif %}
+                            >
+                                {{ facility }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- BUDGET -->
+                <div class="filter-group">
+
+                    <label>
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                        Budget (Optional)
+                    </label>
+
+                    <select name="budget">
+
+                        <option value="">
+                            Any Budget
+                        </option>
+
+                        <option
+                            value="50000"
+                            {% if selected_budget == "50000" %}selected{% endif %}
+                        >
+                            Under ₹50,000
+                        </option>
+
+                        <option
+                            value="100000"
+                            {% if selected_budget == "100000" %}selected{% endif %}
+                        >
+                            Under ₹1,00,000
+                        </option>
+
+                        <option
+                            value="200000"
+                            {% if selected_budget == "200000" %}selected{% endif %}
+                        >
+                            Under ₹2,00,000
+                        </option>
+
+                        <option
+                            value="300000"
+                            {% if selected_budget == "300000" %}selected{% endif %}
+                        >
+                            Under ₹3,00,000
+                        </option>
+
+                    </select>
+
+                </div>
 
             </div>
 
@@ -232,8 +199,8 @@
                     type="submit"
                     class="filter-button"
                 >
-                    <i class="fa-solid fa-filter"></i>
-                    Search
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Find Suitable Hospitals
                 </button>
 
                 <a
@@ -257,7 +224,11 @@
         <div>
 
             <span class="results-label">
-                AVAILABLE HOSPITALS
+                {% if search_query %}
+                    MATCHING HEALTHCARE OPTIONS
+                {% else %}
+                    AVAILABLE HOSPITALS
+                {% endif %}
             </span>
 
             <h2>
@@ -278,7 +249,6 @@
 
             <article class="hospital-card">
 
-
                 <!-- HOSPITAL IMAGE -->
                 <div class="hospital-image">
 
@@ -298,12 +268,10 @@
 
                     {% endif %}
 
-
                     <!-- RATING -->
                     <div class="hospital-rating">
 
                         <i class="fa-solid fa-star"></i>
-
                         {{ hospital.rating }}
 
                     </div>
@@ -313,7 +281,6 @@
 
                 <!-- HOSPITAL CONTENT -->
                 <div class="hospital-content">
-
 
                     <!-- NAME -->
                     <div class="hospital-title">
@@ -358,7 +325,6 @@
                             <span class="status-badge emergency-badge">
 
                                 <i class="fa-solid fa-truck-medical"></i>
-
                                 Emergency
 
                             </span>
@@ -371,7 +337,6 @@
                             <span class="status-badge ambulance-badge">
 
                                 <i class="fa-solid fa-truck-medical"></i>
-
                                 Ambulance
 
                             </span>
@@ -397,9 +362,7 @@
 
                     <!-- DESCRIPTION -->
                     <p class="hospital-description">
-
                         {{ hospital.description|truncatewords:25 }}
-
                     </p>
 
 
@@ -408,11 +371,8 @@
                         href="{% url 'hospital_detail' hospital.pk %}"
                         class="details-button"
                     >
-
                         View Details
-
                         <i class="fa-solid fa-arrow-right"></i>
-
                     </a>
 
                 </div>
@@ -422,39 +382,31 @@
 
         {% empty %}
 
-
             <!-- NO RESULTS -->
             <div class="no-results">
 
                 <div class="no-results-icon">
-
-                    <i class="fa-solid fa-hospital"></i>
-
+                    <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
 
                 <h2>
-                    No Hospitals Found
+                    No Matching Hospitals Found
                 </h2>
 
                 <p>
-                    We couldn't find any hospitals matching
-                    your search. Try changing your location,
-                    budget or facility filter.
+                    We couldn't find a hospital matching your health problem.
+                    Try another problem, treatment or city.
                 </p>
 
                 <a
                     href="{% url 'hospital_list' %}"
                     class="clear-button"
                 >
-
-                    <i class="fa-solid fa-rotate-left"></i>
-
+                    <i class="fa-solid fa-hospital"></i>
                     View All Hospitals
-
                 </a>
 
             </div>
-
 
         {% endfor %}
 

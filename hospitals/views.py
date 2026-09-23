@@ -1,8 +1,8 @@
 import os
+import requests
 
 from django.shortcuts import render, get_object_or_404
 from django.db import models
-from openai import OpenAI
 
 from .models import (
     Hospital,
@@ -12,12 +12,11 @@ from .models import (
 )
 
 
-# =========================
+# ============================================================
 # HOME
-# =========================
+# ============================================================
 
 def home(request):
-
     hospitals = Hospital.objects.all().order_by("name")
 
     treatments = Treatment.objects.all().order_by("name")
@@ -48,9 +47,9 @@ def home(request):
     )
 
 
-# =========================
-# FIND HOSPITALS
-# =========================
+# ============================================================
+# HOSPITAL LIST
+# ============================================================
 
 def hospital_list(request):
 
@@ -62,7 +61,6 @@ def hospital_list(request):
     facility = request.GET.get("facility", "").strip()
     emergency = request.GET.get("emergency", "").strip()
 
-    # SEARCH
     if query:
         hospitals = hospitals.filter(
             models.Q(name__icontains=query)
@@ -79,13 +77,11 @@ def hospital_list(request):
             )
         )
 
-    # CITY FILTER
     if city:
         hospitals = hospitals.filter(
             city__icontains=city
         )
 
-    # BUDGET FILTER
     if budget:
         try:
             hospitals = hospitals.filter(
@@ -94,22 +90,18 @@ def hospital_list(request):
         except (ValueError, TypeError):
             pass
 
-    # FACILITY FILTER
     if facility:
         hospitals = hospitals.filter(
             facilities__icontains=facility
         )
 
-    # EMERGENCY FILTER
     if emergency == "true":
         hospitals = hospitals.filter(
             emergency=True
         )
 
-    # Remove duplicate hospitals
     hospitals = hospitals.distinct()
 
-    # Cities for dropdown
     cities = (
         Hospital.objects
         .values_list("city", flat=True)
@@ -117,15 +109,12 @@ def hospital_list(request):
         .order_by("city")
     )
 
-    # Facilities for dropdown
     all_hospitals = Hospital.objects.all()
 
     facility_set = set()
 
     for hospital in all_hospitals:
-
         for item in hospital.facilities.split(","):
-
             item = item.strip()
 
             if item:
@@ -140,7 +129,6 @@ def hospital_list(request):
             "hospitals": hospitals,
             "cities": cities,
             "facilities": facilities,
-
             "search_query": query,
             "selected_city": city,
             "selected_budget": budget,
@@ -148,9 +136,11 @@ def hospital_list(request):
             "selected_emergency": emergency,
         }
     )
-# =========================
+
+
+# ============================================================
 # HOSPITAL DETAIL
-# =========================
+# ============================================================
 
 def hospital_detail(request, pk):
 
@@ -159,11 +149,13 @@ def hospital_detail(request, pk):
         pk=pk
     )
 
-    treatments = HospitalTreatment.objects.filter(
-        hospital=hospital,
-        available=True
-    ).select_related(
-        "treatment"
+    treatments = (
+        HospitalTreatment.objects
+        .filter(
+            hospital=hospital,
+            available=True
+        )
+        .select_related("treatment")
     )
 
     facilities = [
@@ -183,40 +175,32 @@ def hospital_detail(request, pk):
     )
 
 
-# =========================
+# ============================================================
 # TREATMENTS
-# =========================
+# ============================================================
 
 def treatments(request):
 
-    treatment_list = Treatment.objects.all().order_by("name")
+    treatment_list = (
+        Treatment.objects
+        .all()
+        .order_by("name")
+    )
 
-    query = request.GET.get(
-        "q",
-        ""
-    ).strip()
-
-    department = request.GET.get(
-        "department",
-        ""
-    ).strip()
-
+    query = request.GET.get("q", "").strip()
+    department = request.GET.get("department", "").strip()
 
     if query:
-
         treatment_list = treatment_list.filter(
             models.Q(name__icontains=query)
             | models.Q(department__icontains=query)
             | models.Q(description__icontains=query)
         )
 
-
     if department:
-
         treatment_list = treatment_list.filter(
             department__icontains=department
         )
-
 
     departments = (
         Treatment.objects
@@ -224,7 +208,6 @@ def treatments(request):
         .distinct()
         .order_by("department")
     )
-
 
     return render(
         request,
@@ -236,75 +219,73 @@ def treatments(request):
             "selected_department": department,
         }
     )
-# =========================
+
+
+# ============================================================
 # ANALYTICS
-# =========================
+# ============================================================
 
 def analytics(request):
 
-    treatment_list = Treatment.objects.all()
-
-    # -------------------------
-    # TOTAL PATIENTS
-    # -------------------------
+    treatments = Treatment.objects.all()
 
     total_patients = sum(
         treatment.patients_treated
-        for treatment in treatment_list
+        for treatment in treatments
     )
 
-    # -------------------------
-    # AVERAGE SUCCESS RATE
-    # -------------------------
+    if treatments.exists():
 
-    average_success = 0
+        average_success_rate = (
+            sum(
+                float(treatment.success_rate)
+                for treatment in treatments
+            )
+            / treatments.count()
+        )
 
-    if treatment_list:
+        average_budget = (
+            sum(
+                (
+                    float(treatment.min_cost)
+                    + float(treatment.max_cost)
+                ) / 2
+                for treatment in treatments
+            )
+            / treatments.count()
+        )
 
-        average_success = sum(
-            float(treatment.success_rate)
-            for treatment in treatment_list
-        ) / len(treatment_list)
+    else:
 
-    # -------------------------
-    # AVERAGE TREATMENT BUDGET
-    # -------------------------
-
-    average_budget = 0
-
-    if treatment_list:
-
-        average_budget = sum(
-            float(treatment.average_cost())
-            for treatment in treatment_list
-        ) / len(treatment_list)
+        average_success_rate = 0
+        average_budget = 0
 
     return render(
         request,
         "hospitals/analytics.html",
         {
-            "treatments": treatment_list,
             "total_patients": total_patients,
-            "average_success": round(
-                average_success,
+            "average_success_rate": round(
+                average_success_rate,
                 2
             ),
             "average_budget": round(
                 average_budget,
                 2
             ),
+            "treatments": treatments,
         }
     )
 
 
-# =========================
-# AI CHATBOT
-# =========================
+# ============================================================
+# GEMINI AI CHATBOT
+# ============================================================
 
 def chatbot(request):
 
     answer = None
-    user_message = ""
+    user_message = None
 
     if request.method == "POST":
 
@@ -313,186 +294,292 @@ def chatbot(request):
             ""
         ).strip()
 
-        if not user_message:
+        if user_message:
 
-            answer = (
-                "Please enter your question."
-            )
+            # ------------------------------------------------
+            # GET HOSPITAL DATA FROM DATABASE
+            # ------------------------------------------------
 
-        else:
+            hospitals = Hospital.objects.all()
 
-            try:
+            hospital_data = []
 
-                api_key = os.environ.get(
-                    "OPENAI_API_KEY"
-                )
+            for hospital in hospitals:
 
-                if not api_key:
-
-                    raise Exception(
-                        "OPENAI_API_KEY is not set."
-                    )
-
-                client = OpenAI(
-                    api_key=api_key
-                )
-
-                # -------------------------
-                # HOSPITAL DATABASE
-                # -------------------------
-
-                hospitals = Hospital.objects.all()
-
-                hospital_data = []
-
-                for hospital in hospitals:
-
-                    hospital_data.append(
-                        f"""
+                hospital_data.append(
+                    f"""
 Hospital Name: {hospital.name}
 City: {hospital.city}
 Area: {hospital.area}
 Address: {hospital.address}
 Facilities: {hospital.facilities}
-Emergency Available: {hospital.emergency}
-Ambulance Available: {hospital.ambulance}
+Emergency Service: {"Yes" if hospital.emergency else "No"}
+Ambulance: {"Yes" if hospital.ambulance else "No"}
 Rating: {hospital.rating}
+Description: {hospital.description}
 """
-                    )
+                )
 
-                # -------------------------
-                # TREATMENT DATABASE
-                # -------------------------
+            # ------------------------------------------------
+            # GET TREATMENT DATA FROM DATABASE
+            # ------------------------------------------------
 
-                treatments = Treatment.objects.all()
+            treatments = Treatment.objects.all()
 
-                treatment_data = []
+            treatment_data = []
 
-                for treatment in treatments:
+            for treatment in treatments:
 
-                    treatment_data.append(
-                        f"""
+                average_cost = (
+                    float(treatment.min_cost)
+                    + float(treatment.max_cost)
+                ) / 2
+
+                treatment_data.append(
+                    f"""
 Treatment: {treatment.name}
 Department: {treatment.department}
 Minimum Cost: ₹{treatment.min_cost}
 Maximum Cost: ₹{treatment.max_cost}
+Average Estimated Cost: ₹{average_cost:.2f}
 Patients Treated: {treatment.patients_treated}
 Success Rate: {treatment.success_rate}%
+Description: {treatment.description}
 """
-                    )
+                )
 
-                database_context = f"""
+            # ------------------------------------------------
+            # COMPLETE AI INSTRUCTION
+            # ------------------------------------------------
+
+            website_context = f"""
+You are MediFind Assistant, the AI healthcare assistant
+for the MediFind hospital finder website.
+
+Your job is to help users with:
+
+1. Hospitals
+2. Treatments
+3. Treatment costs
+4. Hospital locations
+5. Hospital facilities
+6. Emergency services
+7. Ambulance availability
+8. Hospital ratings
+9. General healthcare questions
+10. General medical information
+11. Questions about how to use MediFind
+
+IMPORTANT RULES:
+
+- Be friendly, clear and helpful.
+- Answer general questions normally.
+- For MediFind-specific questions, use the database information
+  provided below.
+- Do NOT invent hospitals, treatments, prices, facilities,
+  ratings or statistics.
+- The hospital and treatment information below is
+  DEMO/SAMPLE data for this website.
+- If the requested information is not present in the database,
+  clearly say that it is not currently available in MediFind.
+- For medical questions, provide general educational information.
+- Do not diagnose users.
+- Do not claim to replace a doctor.
+- If a user describes a serious emergency, advise them to contact
+  local emergency services or seek immediate professional care.
+- Keep normal answers reasonably concise.
+- Use bullet points when they make the answer easier to read.
+- If the user asks about a specific hospital, give the relevant
+  information about that hospital.
+- If the user asks about treatment cost, clearly mention that
+  these are estimated/sample website values.
+- If the user asks for hospitals in a city, list matching hospitals
+  from the database.
+
+==================================================
 MEDIFIND HOSPITAL DATABASE
+==================================================
 
-{''.join(hospital_data)}
+{chr(10).join(hospital_data)}
 
-
+==================================================
 MEDIFIND TREATMENT DATABASE
+==================================================
 
-{''.join(treatment_data)}
-"""
+{chr(10).join(treatment_data)}
 
-                # -------------------------
-                # AI REQUEST
-                # -------------------------
-
-                response = client.responses.create(
-
-                    model="gpt-5.6-luna",
-
-                    instructions="""
-
-You are the MediFind healthcare assistant.
-
-You are part of a hospital-finder website.
-
-Your responsibilities:
-
-1. Answer general healthcare information questions.
-
-2. If a user describes symptoms,
-   explain which type of medical specialist
-   or department may be relevant.
-
-3. Give general educational information
-   about diseases, symptoms and treatments.
-
-4. Do NOT diagnose the user.
-
-5. Do NOT claim that the user definitely
-   has a disease.
-
-6. For severe or potentially emergency symptoms,
-   clearly recommend seeking urgent medical care.
-
-7. When the user asks about hospitals,
-   treatments, facilities, costs, ratings,
-   locations or statistics belonging to MediFind,
-   use ONLY the database information supplied below.
-
-8. NEVER invent a hospital name, treatment,
-   price, rating, facility or statistic.
-
-9. If information is not present in the database,
-   clearly say that it is not currently available
-   in the MediFind database.
-
-10. You can still answer general healthcare
-    questions using general medical knowledge.
-
-11. Keep responses simple, helpful and easy to understand.
-
-12. Treatment costs and statistics shown by MediFind
-    are estimates/demo information and actual medical
-    costs and outcomes can vary.
-
-13. For emergency situations, tell the user to seek
-    immediate professional medical help.
-
-14. Do not provide a definitive medical diagnosis.
-
-""",
-
-                    input=f"""
-Here is the current MediFind database:
-
-{database_context}
-
-
-USER QUESTION:
+==================================================
+USER QUESTION
+==================================================
 
 {user_message}
 """
-                )
 
-                answer = response.output_text
+            # ------------------------------------------------
+            # GET GEMINI API KEY
+            # ------------------------------------------------
 
-            except Exception as e:
+            api_key = os.environ.get(
+                "GEMINI_API_KEY"
+            )
 
-                print(
-                    "AI CHATBOT ERROR:",
-                    repr(e)
-                )
+            if not api_key:
 
                 answer = (
-                    "Sorry, I could not connect to "
-                    "the AI assistant right now. "
-                    "Please try again."
+                    "The AI assistant is not configured yet. "
+                    "Please contact the website administrator."
                 )
+
+            else:
+
+                try:
+
+                    # ----------------------------------------
+                    # GEMINI API
+                    # ----------------------------------------
+
+                    url = (
+                        "https://generativelanguage.googleapis.com/"
+                        "v1beta/models/"
+                        "gemini-3.5-flash-lite:"
+                        "generateContent"
+                    )
+
+                    headers = {
+                        "Content-Type": "application/json",
+                        "x-goog-api-key": api_key,
+                    }
+
+                    payload = {
+                        "contents": [
+                            {
+                                "parts": [
+                                    {
+                                        "text": website_context
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+
+                    response = requests.post(
+                        url,
+                        headers=headers,
+                        json=payload,
+                        timeout=30
+                    )
+
+                    data = response.json()
+
+                    # ----------------------------------------
+                    # SUCCESS
+                    # ----------------------------------------
+
+                    if response.status_code == 200:
+
+                        candidates = data.get(
+                            "candidates",
+                            []
+                        )
+
+                        if candidates:
+
+                            parts = (
+                                candidates[0]
+                                .get("content", {})
+                                .get("parts", [])
+                            )
+
+                            if parts:
+
+                                answer = parts[0].get(
+                                    "text",
+                                    "Sorry, I could not generate an answer."
+                                )
+
+                            else:
+
+                                answer = (
+                                    "Sorry, I could not generate "
+                                    "an answer right now."
+                                )
+
+                        else:
+
+                            answer = (
+                                "Sorry, I could not generate "
+                                "an answer right now."
+                            )
+
+                    # ----------------------------------------
+                    # API ERROR
+                    # ----------------------------------------
+
+                    else:
+
+                        answer = (
+                            "Sorry, the AI assistant is temporarily "
+                            "unavailable. Please try again."
+                        )
+
+                        print(
+                            "Gemini API Error:",
+                            response.status_code,
+                            data
+                        )
+
+                # --------------------------------------------
+                # TIMEOUT
+                # --------------------------------------------
+
+                except requests.exceptions.Timeout:
+
+                    answer = (
+                        "The AI assistant took too long to respond. "
+                        "Please try again."
+                    )
+
+                # --------------------------------------------
+                # CONNECTION ERROR
+                # --------------------------------------------
+
+                except requests.exceptions.ConnectionError:
+
+                    answer = (
+                        "I could not connect to the AI assistant. "
+                        "Please check your internet connection "
+                        "and try again."
+                    )
+
+                # --------------------------------------------
+                # OTHER ERROR
+                # --------------------------------------------
+
+                except Exception as e:
+
+                    print(
+                        "Chatbot Error:",
+                        str(e)
+                    )
+
+                    answer = (
+                        "Sorry, I could not connect to the "
+                        "AI assistant right now. Please try again."
+                    )
 
     return render(
         request,
         "hospitals/chatbot.html",
         {
-            "answer": answer,
             "user_message": user_message,
+            "answer": answer,
         }
     )
 
 
-# =========================
+# ============================================================
 # CONTACT
-# =========================
+# ============================================================
 
 def contact(request):
 
@@ -526,7 +613,7 @@ def contact(request):
                 name=name,
                 email=email,
                 subject=subject,
-                message=message,
+                message=message
             )
 
             success = True

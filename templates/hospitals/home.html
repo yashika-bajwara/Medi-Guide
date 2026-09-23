@@ -1,0 +1,748 @@
+{% extends "hospitals/base.html" %}
+{% load static %}
+
+{% block title %}
+MediFind | Find the Right Hospital
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= HERO SECTION ================= -->
+<section class="home-hero">
+    <div class="home-hero-container">
+
+        <div class="home-hero-content">
+
+            <div class="home-hero-badge">
+                <i class="fa-solid fa-shield-heart"></i>
+                Trusted Healthcare Discovery Platform
+            </div>
+
+           <h1>Find the Right Hospital for Your Needs</h1>
+
+<p>
+    Compare hospitals, treatments, facilities, locations
+    and estimated healthcare costs — all in one place.
+</p>
+
+            
+
+          <form
+    method="GET"
+    action="{% url 'hospital_list' %}"
+    class="home-search"
+>
+
+    <div class="home-search-field">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        <div>
+
+            <label>Search Healthcare</label>
+
+            <input
+                type="text"
+                name="q"
+                list="home-search-options"
+                placeholder="Hospital, treatment, city..."
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+            >
+
+        </div>
+
+    </div>
+
+    <button
+        type="submit"
+        class="home-search-button"
+    >
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        Find Hospitals
+
+    </button>
+
+</form>
+
+
+<!-- DATABASE SEARCH SUGGESTIONS -->
+<datalist id="home-search-options">
+
+    <!-- HOSPITALS -->
+
+    {% for hospital in home_hospitals %}
+
+        <option value="{{ hospital.name }}">
+            {{ hospital.city }}
+        </option>
+
+    {% endfor %}
+
+
+    <!-- TREATMENTS -->
+
+    {% for treatment in home_treatments %}
+
+        <option value="{{ treatment.name }}">
+            {{ treatment.department }}
+        </option>
+
+    {% endfor %}
+
+
+    <!-- CITIES -->
+
+    {% for city in home_cities %}
+
+        <option value="{{ city }}"></option>
+
+    {% endfor %}
+
+
+    <!-- DEPARTMENTS -->
+
+    {% for department in home_departments %}
+
+        <option value="{{ department }}"></option>
+
+    {% endfor %}
+
+</datalist>
+
+            <div class="quick-search">
+                <span>Popular:</span>
+
+                <a href="{% url 'hospital_list' %}?q=Cardiology">
+                    Cardiology
+                </a>
+
+                <a href="{% url 'hospital_list' %}?q=Dentist">
+                    Dental
+                </a>
+
+                <a href="{% url 'hospital_list' %}?q=Orthopedic">
+                    Orthopedic
+                </a>
+
+                <a href="{% url 'hospital_list' %}?q=Emergency">
+                    Emergency
+                </a>
+            </div>
+
+            <div class="home-trust">
+
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    Verified Information
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-hospital"></i>
+                    Multiple Hospitals
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-chart-simple"></i>
+                    Cost Comparison
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="home-hero-image">
+
+            <img
+                src="{% static 'images/hero.jpg' %}"
+                alt="Healthcare professionals"
+            >
+
+            <div class="home-image-badge">
+                <i class="fa-solid fa-heart-pulse"></i>
+
+                <div>
+                    <strong>Healthcare Made Simple</strong>
+                    <small>Find care with confidence</small>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- ================= STATISTICS ================= -->
+<section class="home-stats-wrapper">
+
+    <div class="home-stats">
+
+        <div class="home-stat">
+            <div class="home-stat-icon">
+                <i class="fa-solid fa-hospital"></i>
+            </div>
+
+            <div>
+                <strong>100+</strong>
+                <span>Hospitals</span>
+            </div>
+        </div>
+
+        <div class="home-stat">
+            <div class="home-stat-icon">
+                <i class="fa-solid fa-user-doctor"></i>
+            </div>
+
+            <div>
+                <strong>50+</strong>
+                <span>Specialists</span>
+            </div>
+        </div>
+
+        <div class="home-stat">
+            <div class="home-stat-icon">
+                <i class="fa-solid fa-stethoscope"></i>
+            </div>
+
+            <div>
+                <strong>25+</strong>
+                <span>Departments</span>
+            </div>
+        </div>
+
+        <div class="home-stat">
+            <div class="home-stat-icon">
+                <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div>
+                <strong>24/7</strong>
+                <span>Emergency Support</span>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= INTRODUCTION ================= -->
+<section class="home-intro">
+
+    <div class="home-intro-grid">
+
+        <div class="home-intro-image">
+
+            <img
+                src="{% static 'images/doctor.jpg' %}"
+                alt="Doctor consulting patient"
+            >
+
+            <div class="home-image-badge">
+                <i class="fa-solid fa-user-doctor"></i>
+
+                <div>
+                    <strong>Better Healthcare Choices</strong>
+                    <small>Information at your fingertips</small>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="home-intro-content">
+
+            <span class="section-tag">
+                WHY MEDIFIND?
+            </span>
+
+            <h2>
+                Healthcare decisions
+                <span>made easier</span>
+            </h2>
+
+            <p>
+                Finding the right hospital can be difficult when you need
+                medical care quickly. MediFind brings important healthcare
+                information together in one convenient place.
+            </p>
+
+            <p>
+                Compare hospitals based on location, facilities, emergency
+                services, ratings and estimated treatment costs before
+                making an informed decision.
+            </p>
+
+            <div class="home-check-list">
+
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Search hospitals by location</span>
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Explore departments and treatments</span>
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Compare estimated treatment costs</span>
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>Check emergency and ambulance facilities</span>
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>View hospital ratings and reviews</span>
+                </div>
+
+            </div>
+
+            <a href="{% url 'hospital_list' %}" class="btn btn-primary">
+                Explore Hospitals
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FEATURES ================= -->
+<section class="home-features">
+
+    <div class="section-heading">
+
+        <span class="section-tag">
+            OUR FEATURES
+        </span>
+
+        <h2>
+            Everything you need to
+            <span>find better care</span>
+        </h2>
+
+        <p>
+            Useful information and tools to help you explore healthcare
+            options more easily.
+        </p>
+
+    </div>
+
+
+    <div class="home-feature-grid">
+
+        <div class="home-feature-card">
+
+            <div class="home-feature-icon">
+                <i class="fa-solid fa-hospital"></i>
+            </div>
+
+            <h3>Hospital Search</h3>
+
+            <p>
+                Find hospitals according to city, department, treatment
+                and healthcare requirements.
+            </p>
+
+            <a href="{% url 'hospital_list' %}">
+                Explore Hospitals
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div class="home-feature-card">
+
+            <div class="home-feature-icon">
+                <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+
+            <h3>Budget Information</h3>
+
+            <p>
+                Explore estimated treatment costs and compare affordable
+                healthcare options.
+            </p>
+
+            <a href="{% url 'treatments' %}">
+                Check Treatments
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div class="home-feature-card">
+
+            <div class="home-feature-icon">
+                <i class="fa-solid fa-chart-column"></i>
+            </div>
+
+            <h3>Healthcare Analytics</h3>
+
+            <p>
+                Understand hospital ratings, facilities, costs and
+                treatment information through useful data.
+            </p>
+
+            <a href="{% url 'hospital_list' %}">
+                View Data
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+
+        <div class="home-feature-card">
+
+            <div class="home-feature-icon">
+                <i class="fa-solid fa-comments"></i>
+            </div>
+
+            <h3>Health Assistant</h3>
+
+            <p>
+                Get quick answers to common healthcare navigation
+                questions using our chatbot.
+            </p>
+
+            <a href="{% url 'chatbot' %}">
+                Ask Assistant
+                <i class="fa-solid fa-arrow-right"></i>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= HEALTHCARE CATEGORIES ================= -->
+<section class="home-categories">
+
+    <div class="section-heading">
+
+        <span class="section-tag">
+            FIND BY DEPARTMENT
+        </span>
+
+        <h2>
+            What kind of care
+            <span>do you need?</span>
+        </h2>
+
+        <p>
+            Quickly explore hospitals according to common healthcare
+            departments and specialties.
+        </p>
+
+    </div>
+
+
+    <div class="home-category-grid">
+
+        <a href="{% url 'hospital_list' %}?q=Cardiology"
+           class="home-category-card">
+
+            <div class="home-category-icon">
+                <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+
+            <div>
+                <h3>Cardiology</h3>
+                <p>Heart & cardiovascular care</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+        <a href="{% url 'hospital_list' %}?q=Orthopedic"
+           class="home-category-card">
+
+            <div class="home-category-icon">
+                <i class="fa-solid fa-bone"></i>
+            </div>
+
+            <div>
+                <h3>Orthopedics</h3>
+                <p>Bones, joints & muscles</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+        <a href="{% url 'hospital_list' %}?q=Neurology"
+           class="home-category-card">
+
+            <div class="home-category-icon">
+                <i class="fa-solid fa-brain"></i>
+            </div>
+
+            <div>
+                <h3>Neurology</h3>
+                <p>Brain & nervous system</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+        <a href="{% url 'hospital_list' %}?q=Dermatology"
+           class="home-category-card">
+
+            <div class="home-category-icon">
+                <i class="fa-solid fa-hand-dots"></i>
+            </div>
+
+            <div>
+                <h3>Dermatology</h3>
+                <p>Skin & hair care</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+        <a href="{% url 'hospital_list' %}?q=Pediatrics"
+           class="home-category-card">
+
+            <div class="home-category-icon">
+                <i class="fa-solid fa-child"></i>
+            </div>
+
+            <div>
+                <h3>Pediatrics</h3>
+                <p>Child healthcare</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+        <a href="{% url 'hospital_list' %}?q=Gynecology"
+           class="home-category-card">
+
+            <div class="home-category-icon">
+                <i class="fa-solid fa-person-pregnant"></i>
+            </div>
+
+            <div>
+                <h3>Gynecology</h3>
+                <p>Women's healthcare</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+        <a href="{% url 'hospital_list' %}?q=Dental"
+           class="home-category-card">
+
+            <div class="home-category-icon">
+                <i class="fa-solid fa-tooth"></i>
+            </div>
+
+            <div>
+                <h3>Dental Care</h3>
+                <p>Teeth & oral healthcare</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+
+        <a href="{% url 'hospital_list' %}"
+           class="home-category-card">
+
+            <div class="home-category-icon">
+                <i class="fa-solid fa-ellipsis"></i>
+            </div>
+
+            <div>
+                <h3>View All</h3>
+                <p>Explore more departments</p>
+            </div>
+
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ================= EMERGENCY SECTION ================= -->
+<section class="home-emergency">
+
+    <div class="home-emergency-content">
+
+        <div class="home-emergency-icon">
+            <i class="fa-solid fa-truck-medical"></i>
+        </div>
+
+        <div class="home-emergency-text">
+
+            <span>NEED IMMEDIATE HELP?</span>
+
+            <h2>
+                Find Emergency & 24/7 Hospitals
+            </h2>
+
+            <p>
+                Quickly explore hospitals offering emergency departments,
+                ambulance services and round-the-clock healthcare.
+            </p>
+
+        </div>
+
+        <a href="{% url 'hospital_list' %}?emergency=true"
+           class="home-emergency-button">
+
+            Find Emergency Care
+            <i class="fa-solid fa-arrow-right"></i>
+
+        </a>
+
+    </div>
+
+</section>
+
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="home-how">
+
+    <div class="section-heading">
+
+        <span class="section-tag">
+            SIMPLE PROCESS
+        </span>
+
+        <h2>
+            Find healthcare in
+            <span>3 simple steps</span>
+        </h2>
+
+        <p>
+            MediFind makes hospital discovery simple and convenient.
+        </p>
+
+    </div>
+
+
+    <div class="home-steps">
+
+        <div class="home-step">
+
+            <div class="home-step-number">
+                01
+            </div>
+
+            <h3>Search</h3>
+
+            <p>
+                Enter a hospital, treatment, department or city to begin
+                your search.
+            </p>
+
+        </div>
+
+
+        <div class="home-step-line"></div>
+
+
+        <div class="home-step">
+
+            <div class="home-step-number">
+                02
+            </div>
+
+            <h3>Compare</h3>
+
+            <p>
+                Compare hospitals using facilities, ratings, location and
+                estimated treatment costs.
+            </p>
+
+        </div>
+
+
+        <div class="home-step-line"></div>
+
+
+        <div class="home-step">
+
+            <div class="home-step-number">
+                03
+            </div>
+
+            <h3>Choose</h3>
+
+            <p>
+                Explore hospital details and choose the healthcare option
+                that fits your requirements.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= FINAL CTA ================= -->
+<section class="home-cta">
+
+    <div>
+
+        <span class="section-tag">
+            START YOUR SEARCH
+        </span>
+
+        <h2>
+            Your healthcare journey
+            starts here.
+        </h2>
+
+        <p>
+            Explore hospitals, treatments, facilities and healthcare
+            information in one place.
+        </p>
+
+    </div>
+
+    <a href="{% url 'hospital_list' %}" class="home-cta-button">
+        Find a Hospital
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
+
+</section>
+
+{% endblock %}

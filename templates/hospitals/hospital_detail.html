@@ -1,0 +1,526 @@
+{% extends "hospitals/base.html" %}
+{% load static %}
+
+{% block title %}
+MediFind | {{ hospital.name }}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/hospital-detail.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="hospital-detail-page">
+
+    <!-- ================= HERO ================= -->
+
+    <div class="hospital-detail-hero">
+
+        <div class="hospital-detail-container">
+
+            <!-- IMAGE -->
+
+            <div class="hospital-main-image">
+
+                {% if hospital.image_name %}
+
+                    <img
+                        src="{% static 'images/' %}{{ hospital.image_name }}"
+                        alt="{{ hospital.name }}"
+                    >
+
+                {% else %}
+
+                    <img
+                        src="{% static 'images/hospital-placeholder.jpg' %}"
+                        alt="{{ hospital.name }}"
+                    >
+
+                {% endif %}
+
+                <div class="image-overlay">
+                    <i class="fa-solid fa-hospital"></i>
+                    Hospital
+                </div>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+
+            <div class="hospital-main-info">
+
+                <div class="hospital-status-row">
+
+                    {% if hospital.emergency %}
+
+                    <span class="status emergency">
+                        <i class="fa-solid fa-truck-medical"></i>
+                        Emergency Available
+                    </span>
+
+                    {% endif %}
+
+                    {% if hospital.ambulance %}
+
+                    <span class="status ambulance">
+                        <i class="fa-solid fa-ambulance"></i>
+                        Ambulance Available
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <h1>
+                    {{ hospital.name }}
+                </h1>
+
+
+                <div class="hospital-location">
+
+                    <i class="fa-solid fa-location-dot"></i>
+
+                    <span>
+                        {{ hospital.address }}, {{ hospital.city }}
+                    </span>
+
+                </div>
+
+
+                <!-- RATING -->
+
+                <div class="hospital-rating">
+
+                    <div class="rating-number">
+
+                        <i class="fa-solid fa-star"></i>
+
+                        <strong>
+                            {{ hospital.rating }}
+                        </strong>
+
+                    </div>
+
+                    <div>
+                        <span>Hospital Rating</span>
+                        <small>Based on available hospital data</small>
+                    </div>
+
+                </div>
+
+
+                <p class="hospital-description">
+                    {{ hospital.description }}
+                </p>
+
+
+                <!-- CONTACT -->
+
+                <div class="hospital-contact">
+
+                    {% if hospital.phone %}
+
+                    <a href="tel:{{ hospital.phone }}">
+
+                        <i class="fa-solid fa-phone"></i>
+
+                        <span>
+                            {{ hospital.phone }}
+                        </span>
+
+                    </a>
+
+                    {% endif %}
+
+
+                    {% if hospital.email %}
+
+                    <a href="mailto:{{ hospital.email }}">
+
+                        <i class="fa-solid fa-envelope"></i>
+
+                        <span>
+                            {{ hospital.email }}
+                        </span>
+
+                    </a>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================= GOOGLE MAP ================= -->
+
+    <section class="hospital-map-section">
+
+        <div class="hospital-section">
+
+            <div class="section-heading">
+
+                <span>
+                    <i class="fa-solid fa-map-location-dot"></i>
+                    HOSPITAL LOCATION
+                </span>
+
+                <h2>
+                    Find Us on the Map
+                </h2>
+
+                <p>
+                    View the hospital location and surrounding area.
+                </p>
+
+            </div>
+
+
+            <div class="hospital-map-container">
+
+                <iframe
+                    src="https://www.google.com/maps?q={{ hospital.address|urlencode }},{{ hospital.city|urlencode }}&output=embed"
+                    width="100%"
+                    height="420"
+                    style="border:0;"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade"
+                    title="{{ hospital.name }} location on Google Maps">
+                </iframe>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CONTENT ================= -->
+
+    <main class="hospital-detail-content">
+
+
+        <!-- ================= FACILITIES ================= -->
+
+        <section class="hospital-section">
+
+            <div class="section-heading">
+
+                <span>
+                    <i class="fa-solid fa-shield-heart"></i>
+                    HOSPITAL SERVICES
+                </span>
+
+                <h2>
+                    Facilities & Services
+                </h2>
+
+                <p>
+                    Healthcare facilities and services available
+                    at this hospital.
+                </p>
+
+            </div>
+
+
+            <div class="facility-grid">
+
+                {% for facility in facilities %}
+
+                <div class="facility-card">
+
+                    <div class="facility-icon">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            {{ facility }}
+                        </strong>
+
+                        <span>
+                            Available
+                        </span>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= TREATMENTS ================= -->
+
+        <section class="hospital-section">
+
+            <div class="section-heading">
+
+                <span>
+                    <i class="fa-solid fa-stethoscope"></i>
+                    TREATMENT INFORMATION
+                </span>
+
+                <h2>
+                    Available Treatments
+                </h2>
+
+                <p>
+                    Explore estimated treatment costs and
+                    treatment statistics available at this hospital.
+                </p>
+
+            </div>
+
+
+            <div class="hospital-treatment-grid">
+
+                {% for item in treatments %}
+
+                <article class="hospital-treatment-card">
+
+
+                    <!-- TOP -->
+
+                    <div class="treatment-card-top">
+
+                        <div class="treatment-icon">
+
+                            {% if item.treatment.department == "Cardiology" %}
+
+                                <i class="fa-solid fa-heart-pulse"></i>
+
+                            {% elif item.treatment.department == "Orthopedics" %}
+
+                                <i class="fa-solid fa-bone"></i>
+
+                            {% elif item.treatment.department == "Neurology" %}
+
+                                <i class="fa-solid fa-brain"></i>
+
+                            {% elif item.treatment.department == "Dermatology" %}
+
+                                <i class="fa-solid fa-hand-dots"></i>
+
+                            {% elif item.treatment.department == "Pediatrics" %}
+
+                                <i class="fa-solid fa-child"></i>
+
+                            {% elif item.treatment.department == "Dental" %}
+
+                                <i class="fa-solid fa-tooth"></i>
+
+                            {% elif item.treatment.department == "Gynecology" %}
+
+                                <i class="fa-solid fa-person-pregnant"></i>
+
+                            {% elif item.treatment.department == "Ophthalmology" %}
+
+                                <i class="fa-solid fa-eye"></i>
+
+                            {% elif item.treatment.department == "Radiology" %}
+
+                                <i class="fa-solid fa-x-ray"></i>
+
+                            {% elif item.treatment.department == "Urology" %}
+
+                                <i class="fa-solid fa-droplet"></i>
+
+                            {% else %}
+
+                                <i class="fa-solid fa-stethoscope"></i>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <span class="available-label">
+
+                            <i class="fa-solid fa-check"></i>
+
+                            Available
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- NAME -->
+
+                    <h3>
+                        {{ item.treatment.name }}
+                    </h3>
+
+
+                    <span class="treatment-department">
+
+                        {{ item.treatment.department }}
+
+                    </span>
+
+
+                    <!-- COST -->
+
+                    <div class="hospital-treatment-cost">
+
+                        <div>
+
+                            <span>
+                                Hospital Estimated Cost
+                            </span>
+
+                            <strong>
+                                ₹{{ item.estimated_cost|floatformat:0 }}
+                            </strong>
+
+                        </div>
+
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+
+                    </div>
+
+
+                    <!-- STATISTICS -->
+
+                    <div class="hospital-treatment-stats">
+
+
+                        <div class="treatment-stat">
+
+                            <i class="fa-solid fa-users"></i>
+
+                            <strong>
+                                {{ item.treatment.patients_treated }}
+                            </strong>
+
+                            <span>
+                                Patients Treated
+                            </span>
+
+                        </div>
+
+
+                        <div class="treatment-stat">
+
+                            <i class="fa-solid fa-circle-check"></i>
+
+                            <strong>
+                                {{ item.treatment.success_rate }}%
+                            </strong>
+
+                            <span>
+                                Success Rate
+                            </span>
+
+                        </div>
+
+
+                        <div class="treatment-stat">
+
+                            <i class="fa-solid fa-chart-simple"></i>
+
+                            <strong>
+                                ₹{{ item.treatment.average_cost|floatformat:0 }}
+                            </strong>
+
+                            <span>
+                                Average Budget
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                {% empty %}
+
+                <div class="no-treatment-message">
+
+                    <i class="fa-solid fa-notes-medical"></i>
+
+                    <h3>
+                        No Treatments Available
+                    </h3>
+
+                    <p>
+                        Treatment information has not been added
+                        for this hospital yet.
+                    </p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= CONTACT CARD ================= -->
+
+        <section class="hospital-help-card">
+
+            <div class="help-icon">
+
+                <i class="fa-solid fa-headset"></i>
+
+            </div>
+
+            <div class="help-content">
+
+                <span>
+                    NEED MORE INFORMATION?
+                </span>
+
+                <h2>
+                    Contact the Hospital
+                </h2>
+
+                <p>
+                    Use the contact details above to get
+                    information about appointments, availability
+                    and hospital services.
+                </p>
+
+            </div>
+
+
+            {% if hospital.phone %}
+
+            <a
+                href="tel:{{ hospital.phone }}"
+                class="help-button"
+            >
+
+                <i class="fa-solid fa-phone"></i>
+
+                Call Hospital
+
+            </a>
+
+            {% endif %}
+
+        </section>
+
+
+    </main>
+
+</section>
+
+{% endblock %}

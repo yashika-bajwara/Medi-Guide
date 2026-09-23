@@ -1,0 +1,141 @@
+.analytics-page {
+    max-width: 1200px;
+    margin: auto;
+    padding: 70px 25px;
+}
+
+.analytics-header {
+    text-align: center;
+    max-width: 750px;
+    margin: auto;
+}
+
+.analytics-label {
+    color: #0e9699;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.analytics-header h1 {
+    font-size: 44px;
+    color: #102a43;
+    margin: 12px 0;
+}
+
+.analytics-header p {
+    color: #64748b;
+    font-size: 17px;
+}
+
+
+/* SUMMARY */
+
+.analytics-summary {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin-top: 50px;
+}
+
+.analytics-summary-card {
+    background: white;
+    border-radius: 18px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+}
+
+.analytics-summary-card i {
+    font-size: 30px;
+    color: #0ea5a8;
+    margin-bottom: 15px;
+}
+
+.analytics-summary-card h2 {
+    font-size: 32px;
+    color: #102a43;
+}
+
+.analytics-summary-card p {
+    color: #64748b;
+}
+
+
+/* TABLE */
+
+.analytics-table-section {
+    margin-top: 60px;
+}
+
+.analytics-section-heading {
+    margin-bottom: 25px;
+}
+
+.analytics-section-heading h2 {
+    color: #102a43;
+    font-size: 28px;
+}
+
+.analytics-section-heading p {
+    color: #64748b;
+}
+
+.analytics-table-wrapper {
+    overflow-x: auto;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.08);
+}
+
+.analytics-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+}
+
+.analytics-table th {
+    background: #102a43;
+    color: white;
+    padding: 17px 15px;
+    text-align: left;
+    font-size: 13px;
+}
+
+.analytics-table td {
+    padding: 17px 15px;
+    border-bottom: 1px solid #e5e7eb;
+    color: #475569;
+}
+
+.analytics-table tr:hover {
+    background: #f8fafc;
+}
+
+.success-badge {
+    background: #dcfce7;
+    color: #15803d;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.empty-row {
+    text-align: center;
+    padding: 40px !important;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 800px) {
+
+    .analytics-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .analytics-header h1 {
+        font-size: 34px;
+    }
+}

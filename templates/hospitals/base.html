@@ -1,0 +1,198 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}MediFind{% endblock %}
+    </title>
+
+    <!-- Common CSS -->
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+    <!-- Font Awesome -->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    >
+
+    <!-- Page-specific CSS -->
+    {% block extra_css %}
+    {% endblock %}
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="main-header">
+
+        <div class="nav-container">
+
+            <!-- Logo -->
+
+            <a href="{% url 'home' %}" class="logo">
+
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+
+                <div class="logo-text">
+                    <span>Medi</span>Find
+                </div>
+
+            </a>
+
+
+            <!-- Navigation -->
+
+            <nav class="main-nav">
+
+                <a href="{% url 'home' %}">
+                    <i class="fa-solid fa-house"></i>
+                    Home
+                </a>
+
+                <a href="{% url 'hospital_list' %}">
+                    <i class="fa-solid fa-hospital"></i>
+                    Find Hospitals
+                </a>
+
+                <a href="{% url 'treatments' %}">
+                    <i class="fa-solid fa-stethoscope"></i>
+                    Treatments
+                </a>
+
+                <a href="{% url 'analytics' %}">
+                    <i class="fa-solid fa-chart-line"></i>
+                    Analytics
+                </a>
+
+                <a href="{% url 'chatbot' %}">
+                    <i class="fa-solid fa-robot"></i>
+                    Chatbot
+                </a>
+
+                <a href="{% url 'contact' %}">
+                    <i class="fa-solid fa-envelope"></i>
+                    Contact
+                </a>
+
+            </nav>
+
+
+            <!-- Emergency button -->
+
+            <a href="{% url 'hospital_list' %}?emergency=true"
+               class="emergency-btn">
+
+                <i class="fa-solid fa-truck-medical"></i>
+
+                Emergency
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main>
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="main-footer">
+
+        <div class="footer-container">
+
+            <div class="footer-about">
+
+                <h3>
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    MediFind
+                </h3>
+
+                <p>
+                    Find hospitals, compare treatments,
+                    explore healthcare analytics and
+                    get healthcare assistance.
+                </p>
+
+            </div>
+
+
+            <div class="footer-links">
+
+                <h4>Quick Links</h4>
+
+                <a href="{% url 'home' %}">Home</a>
+
+                <a href="{% url 'hospital_list' %}">
+                    Find Hospitals
+                </a>
+
+                <a href="{% url 'treatments' %}">
+                    Treatments
+                </a>
+
+                <a href="{% url 'analytics' %}">
+                    Analytics
+                </a>
+
+                <a href="{% url 'chatbot' %}">
+                    Chatbot
+                </a>
+
+                <a href="{% url 'contact' %}">
+                    Contact
+                </a>
+
+            </div>
+
+
+            <div class="footer-contact">
+
+                <h4>Healthcare Support</h4>
+
+                <p>
+                    <i class="fa-solid fa-phone"></i>
+                    Emergency: 112
+                </p>
+
+                <p>
+                    <i class="fa-solid fa-envelope"></i>
+                    support@medifind.com
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer-bottom">
+
+            <p>
+                © 2026 MediFind. All Rights Reserved.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+</body>
+
+</html>

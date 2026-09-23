@@ -1,0 +1,185 @@
+{% extends "hospitals/base.html" %}
+{% load static %}
+
+{% block title %}
+MediFind | Healthcare Chatbot
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chatbot.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="chatbot-page">
+
+    <div class="chatbot-header">
+
+        <span class="chatbot-label">
+            <i class="fa-solid fa-robot"></i>
+            MEDIFIND ASSISTANT
+        </span>
+
+        <h1>How Can We Help You?</h1>
+
+        <p>
+            Ask about hospitals, treatments, estimated costs,
+            locations and emergency services.
+        </p>
+
+    </div>
+
+
+    <div class="chatbot-container">
+
+        <div class="chatbot-top">
+
+            <div class="bot-avatar">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+
+            <div>
+                <h3>MediFind Assistant</h3>
+
+                <span>
+                    <i class="fa-solid fa-circle"></i>
+                    Online
+                </span>
+            </div>
+
+        </div>
+
+
+        <div class="chatbot-messages">
+
+            <div class="bot-message">
+
+                <div class="message-icon">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+
+                <div class="message-content">
+
+                    <p>
+                        Hello! 👋 I'm the MediFind healthcare
+                        assistant.
+                    </p>
+
+                    <p>
+                        You can ask me about:
+                    </p>
+
+                    <ul>
+                        <li>Hospitals</li>
+                        <li>Treatments</li>
+                        <li>Estimated costs</li>
+                        <li>Hospital locations</li>
+                        <li>Emergency services</li>
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+            {% if user_message %}
+
+            <div class="user-message">
+
+                <div class="message-content">
+                    <p>{{ user_message }}</p>
+                </div>
+
+                <div class="message-icon user-icon">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if answer %}
+
+            <div class="bot-message answer-message">
+
+                <div class="message-icon">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+
+                <div class="message-content">
+                    <p>{{ answer }}</p>
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- CHAT FORM -->
+
+        <form method="POST" action="{% url 'chatbot' %}" class="chatbot-form">
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="message"
+                placeholder="Ask about hospitals, treatments or costs..."
+                autocomplete="off"
+                required
+            >
+
+            <button type="submit">
+                <i class="fa-solid fa-paper-plane"></i>
+                Send
+            </button>
+
+        </form>
+
+
+        <div class="chatbot-suggestions">
+
+            <span>Try asking:</span>
+
+            <div class="suggestion-list">
+
+                <button
+                    type="button"
+                    onclick="document.querySelector('.chatbot-form input').value='Which hospitals are available?'"
+                >
+                    Which hospitals are available?
+                </button>
+
+                <button
+                    type="button"
+                    onclick="document.querySelector('.chatbot-form input').value='What treatments are available?'"
+                >
+                    What treatments are available?
+                </button>
+
+                <button
+                    type="button"
+                    onclick="document.querySelector('.chatbot-form input').value='What is the treatment cost?'"
+                >
+                    What is the treatment cost?
+                </button>
+
+                <button
+                    type="button"
+                    onclick="document.querySelector('.chatbot-form input').value='Which hospitals have emergency services?'"
+                >
+                    Emergency hospitals?
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

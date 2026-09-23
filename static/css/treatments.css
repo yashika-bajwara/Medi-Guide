@@ -1,0 +1,555 @@
+/* =====================================================
+   MEDIFIND - TREATMENTS PAGE
+===================================================== */
+
+.treatments-page {
+    background: #f5f9fa;
+    min-height: 100vh;
+    padding-bottom: 80px;
+}
+
+
+/* =====================================================
+   HERO
+===================================================== */
+
+.treatment-hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 70px 30px 55px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    position: relative;
+}
+
+.treatment-hero-content {
+    max-width: 720px;
+}
+
+.hero-small-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: #0b8f86;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+
+    margin-bottom: 15px;
+}
+
+.treatment-hero h1 {
+    margin: 0;
+
+    font-size: clamp(42px, 5vw, 64px);
+    line-height: 1.05;
+
+    color: #12343b;
+    letter-spacing: -2px;
+}
+
+.treatment-hero h1 span {
+    color: #0b9b91;
+}
+
+.treatment-hero p {
+    max-width: 620px;
+
+    margin-top: 20px;
+
+    color: #65777b;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.hero-medical-icon {
+    width: 150px;
+    height: 150px;
+
+    border-radius: 50%;
+
+    background: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: 0 15px 45px rgba(15, 70, 76, 0.12);
+
+    color: #0b9b91;
+    font-size: 65px;
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+.treatment-search {
+    max-width: 1140px;
+    margin: 0 auto 55px;
+
+    padding: 0 30px;
+}
+
+.treatment-search form {
+    background: white;
+
+    padding: 12px;
+
+    border-radius: 18px;
+
+    display: grid;
+    grid-template-columns: 1fr 230px 120px;
+
+    gap: 10px;
+
+    box-shadow: 0 10px 35px rgba(17, 55, 60, 0.08);
+}
+
+.search-input {
+    display: flex;
+    align-items: center;
+
+    padding: 0 18px;
+
+    border: 1px solid #e1eaeb;
+    border-radius: 12px;
+}
+
+.search-input i {
+    color: #0b9b91;
+    margin-right: 12px;
+}
+
+.search-input input {
+    width: 100%;
+
+    border: none;
+    outline: none;
+
+    font-size: 15px;
+    color: #243c41;
+
+    background: transparent;
+}
+
+.treatment-search select {
+    border: 1px solid #e1eaeb;
+    border-radius: 12px;
+
+    padding: 0 14px;
+
+    background: white;
+
+    color: #455b60;
+
+    outline: none;
+
+    font-size: 14px;
+}
+
+.treatment-search button {
+    border: none;
+    border-radius: 12px;
+
+    background: #0b9b91;
+    color: white;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.25s;
+}
+
+.treatment-search button:hover {
+    background: #087b74;
+    transform: translateY(-1px);
+}
+
+
+/* =====================================================
+   HEADING
+===================================================== */
+
+.treatment-heading {
+    max-width: 1140px;
+
+    margin: 0 auto 28px;
+
+    padding: 0 30px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+}
+
+.treatment-heading > div:first-child span {
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    font-weight: 800;
+
+    color: #0b9b91;
+}
+
+.treatment-heading h2 {
+    margin: 7px 0 0;
+
+    color: #17373d;
+
+    font-size: 30px;
+}
+
+.treatment-count {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+
+    color: #718185;
+}
+
+.treatment-count strong {
+    color: #0b9b91;
+    font-size: 28px;
+}
+
+.treatment-count small {
+    font-size: 13px;
+}
+
+
+/* =====================================================
+   GRID
+===================================================== */
+
+.treatment-grid {
+    max-width: 1140px;
+
+    margin: 0 auto;
+
+    padding: 0 30px;
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 25px;
+}
+
+
+/* =====================================================
+   CARD
+===================================================== */
+
+.treatment-card {
+    background: white;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    border: 1px solid #e8eeee;
+
+    box-shadow: 0 8px 28px rgba(20, 60, 65, 0.07);
+
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.treatment-card:hover {
+    transform: translateY(-7px);
+
+    box-shadow: 0 18px 42px rgba(20, 60, 65, 0.14);
+}
+
+
+/* =====================================================
+   IMAGE
+===================================================== */
+
+.treatment-image {
+    height: 205px;
+
+    position: relative;
+
+    overflow: hidden;
+
+    background: #dcefee;
+}
+
+.treatment-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 0.5s ease;
+}
+
+.treatment-card:hover .treatment-image img {
+    transform: scale(1.06);
+}
+
+.department-tag {
+    position: absolute;
+
+    left: 15px;
+    bottom: 15px;
+
+    padding: 7px 12px;
+
+    border-radius: 20px;
+
+    background: rgba(255,255,255,0.94);
+
+    color: #087f77;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   CONTENT
+===================================================== */
+
+.treatment-card-content {
+    padding: 22px;
+}
+
+.treatment-card h3 {
+    margin: 0 0 10px;
+
+    color: #17373d;
+
+    font-size: 21px;
+
+    line-height: 1.25;
+}
+
+.treatment-description {
+    color: #718185;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    min-height: 42px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =====================================================
+   COST
+===================================================== */
+
+.treatment-cost {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 13px;
+
+    border-radius: 12px;
+
+    background: #f1faf9;
+
+    margin-bottom: 18px;
+}
+
+.info-icon {
+    width: 38px;
+    height: 38px;
+
+    flex-shrink: 0;
+
+    border-radius: 10px;
+
+    background: #d9f2ef;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #0b9b91;
+}
+
+.treatment-cost span {
+    display: block;
+
+    color: #728286;
+
+    font-size: 11px;
+
+    margin-bottom: 3px;
+}
+
+.treatment-cost strong {
+    color: #183a40;
+
+    font-size: 15px;
+}
+
+
+/* =====================================================
+   STATS
+===================================================== */
+
+.treatment-stats {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    border-top: 1px solid #edf1f1;
+
+    padding-top: 17px;
+
+    gap: 8px;
+}
+
+.treatment-stats > div {
+    text-align: center;
+}
+
+.treatment-stats i {
+    display: block;
+
+    color: #0b9b91;
+
+    font-size: 16px;
+
+    margin-bottom: 6px;
+}
+
+.treatment-stats span {
+    display: block;
+
+    color: #263f44;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+.treatment-stats small {
+    display: block;
+
+    color: #879497;
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+/* =====================================================
+   NO RESULTS
+===================================================== */
+
+.no-treatments {
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 70px 20px;
+
+    background: white;
+
+    border-radius: 20px;
+}
+
+.no-treatments i {
+    font-size: 50px;
+
+    color: #0b9b91;
+
+    margin-bottom: 20px;
+}
+
+.no-treatments h2 {
+    color: #17373d;
+}
+
+.no-treatments p {
+    color: #718185;
+}
+
+.no-treatments a {
+    display: inline-block;
+
+    margin-top: 15px;
+
+    padding: 11px 20px;
+
+    border-radius: 10px;
+
+    background: #0b9b91;
+
+    color: white;
+
+    text-decoration: none;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 1000px) {
+
+    .treatment-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .treatment-search form {
+        grid-template-columns: 1fr 200px;
+    }
+
+    .treatment-search button {
+        min-height: 48px;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .treatment-hero {
+        padding-top: 45px;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .hero-medical-icon {
+        display: none;
+    }
+
+    .treatment-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .treatment-search form {
+        grid-template-columns: 1fr;
+    }
+
+    .treatment-heading {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 12px;
+    }
+
+    .treatment-count {
+        margin-top: 5px;
+    }
+}

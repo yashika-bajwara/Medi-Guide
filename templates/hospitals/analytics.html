@@ -1,0 +1,173 @@
+{% extends "hospitals/base.html" %}
+{% load static %}
+
+{% block title %}
+MediFind | Healthcare Analytics
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/analytics.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<section class="analytics-page">
+
+    <div class="analytics-header">
+
+        <span class="analytics-label">
+            <i class="fa-solid fa-chart-line"></i>
+            HEALTHCARE DATA
+        </span>
+
+        <h1>Healthcare Analytics</h1>
+
+        <p>
+            Explore treatment statistics, patient numbers,
+            treatment success rates and estimated healthcare costs.
+        </p>
+
+    </div>
+
+
+    <div class="analytics-summary">
+
+        <div class="analytics-summary-card">
+
+            <i class="fa-solid fa-user-group"></i>
+
+            <h2>{{ total_patients }}</h2>
+
+            <p>Patients Treated</p>
+
+        </div>
+
+
+        <div class="analytics-summary-card">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <h2>{{ average_success }}%</h2>
+
+            <p>Average Success Rate</p>
+
+        </div>
+
+
+        <div class="analytics-summary-card">
+
+            <i class="fa-solid fa-indian-rupee-sign"></i>
+
+            <h2>₹{{ average_budget|floatformat:0 }}</h2>
+
+            <p>Average Treatment Budget</p>
+
+        </div>
+
+    </div>
+
+
+    <div class="analytics-table-section">
+
+        <div class="analytics-section-heading">
+
+            <h2>Treatment Analytics</h2>
+
+            <p>
+                Compare important treatment information.
+            </p>
+
+        </div>
+
+
+        <div class="analytics-table-wrapper">
+
+            <table class="analytics-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Treatment</th>
+                        <th>Department</th>
+                        <th>Patients Treated</th>
+                        <th>Success Rate</th>
+                        <th>Min Budget</th>
+                        <th>Max Budget</th>
+                        <th>Average Budget</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for treatment in treatments %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ treatment.name }}
+                            </strong>
+                        </td>
+
+                        <td>
+                            {{ treatment.department }}
+                        </td>
+
+                        <td>
+                            {{ treatment.patients_treated }}
+                        </td>
+
+                        <td>
+                            <span class="success-badge">
+                                {{ treatment.success_rate }}%
+                            </span>
+                        </td>
+
+                        <td>
+                            ₹{{ treatment.min_cost|floatformat:0 }}
+                        </td>
+
+                        <td>
+                            ₹{{ treatment.max_cost|floatformat:0 }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ₹{{ treatment.average_cost|floatformat:0 }}
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="7" class="empty-row">
+
+                            No treatment data available yet.
+
+                            <br>
+
+                            Add treatments from the Django admin panel.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

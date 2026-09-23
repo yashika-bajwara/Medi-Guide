@@ -1,0 +1,367 @@
+{% extends "hospitals/base.html" %}
+{% load static %}
+
+{% block title %}MediFind | Treatments{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/treatments.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="treatments-page">
+
+    <!-- PAGE HERO -->
+    <div class="treatment-hero">
+
+        <div class="treatment-hero-content">
+
+            <span class="hero-small-title">
+                <i class="fa-solid fa-heart-pulse"></i>
+                HEALTHCARE SERVICES
+            </span>
+
+            <h1>
+                Find the Right
+                <span>Treatment</span>
+            </h1>
+
+            <p>
+                Explore treatments, departments, estimated costs,
+                treatment outcomes and healthcare information.
+            </p>
+
+        </div>
+
+        <div class="hero-medical-icon">
+            <i class="fa-solid fa-stethoscope"></i>
+        </div>
+
+    </div>
+
+
+    <!-- SEARCH -->
+    <div class="treatment-search">
+
+        <form method="GET" action="{% url 'treatments' %}">
+
+            <div class="search-input">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ search_query }}"
+                    placeholder="Search treatment or department..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+            <select name="department">
+
+                <option value="">
+                    All Departments
+                </option>
+
+                {% for department in departments %}
+
+                    <option
+                        value="{{ department }}"
+                        {% if selected_department == department %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ department }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+            <button type="submit">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- RESULT TITLE -->
+    <div class="treatment-heading">
+
+        <div>
+            <span>AVAILABLE SERVICES</span>
+
+            <h2>
+                Explore Treatments
+            </h2>
+        </div>
+
+        <div class="treatment-count">
+            <strong>{{ treatments|length }}</strong>
+            <small>treatments available</small>
+        </div>
+
+    </div>
+
+
+    <!-- TREATMENT CARDS -->
+    <div class="treatment-grid">
+
+        {% for treatment in treatments %}
+
+        <article class="treatment-card">
+
+
+            <!-- IMAGE -->
+
+            <div class="treatment-image">
+
+                {% if treatment.department == "Cardiology" %}
+
+                    <img
+                        src="{% static 'images/cardiology-treatment.jpg' %}"
+                        alt="Cardiology treatment"
+                    >
+
+                {% elif treatment.department == "Orthopedics" %}
+
+                    <img
+                        src="{% static 'images/orthopedics-treatment.jpg' %}"
+                        alt="Orthopedic treatment"
+                    >
+
+                {% elif treatment.department == "Neurology" %}
+
+                    <img
+                        src="{% static 'images/neurology-treatment.jpg' %}"
+                        alt="Neurology treatment"
+                    >
+
+                {% elif treatment.department == "Dermatology" %}
+
+                    <img
+                        src="{% static 'images/dermatology-treatment.jpg' %}"
+                        alt="Dermatology treatment"
+                    >
+
+                {% elif treatment.department == "Pediatrics" %}
+
+                    <img
+                        src="{% static 'images/pediatrics-treatment.jpg' %}"
+                        alt="Pediatric treatment"
+                    >
+
+                {% elif treatment.department == "Gynecology" %}
+
+                    <img
+                        src="{% static 'images/gynecology-treatment.jpg' %}"
+                        alt="Gynecology treatment"
+                    >
+
+                {% elif treatment.department == "Dental" %}
+
+                    <img
+                        src="{% static 'images/dental-treatment.jpg' %}"
+                        alt="Dental treatment"
+                    >
+
+                {% elif treatment.department == "Ophthalmology" %}
+
+                    <img
+                        src="{% static 'images/ophthalmology-treatment.jpg' %}"
+                        alt="Eye treatment"
+                    >
+
+                {% elif treatment.department == "Radiology" %}
+
+                    <img
+                        src="{% static 'images/radiology-treatment.jpg' %}"
+                        alt="Radiology treatment"
+                    >
+
+                {% elif treatment.department == "Urology" %}
+
+                    <img
+                        src="{% static 'images/urology-treatment.jpg' %}"
+                        alt="Urology treatment"
+                    >
+
+                {% elif treatment.department == "General Medicine" %}
+
+                    <img
+                        src="{% static 'images/general-medicine-treatment.jpg' %}"
+                        alt="General medicine treatment"
+                    >
+
+                {% elif treatment.department == "General Surgery" %}
+
+                    <img
+                        src="{% static 'images/general-surgery-treatment.jpg' %}"
+                        alt="General surgery treatment"
+                    >
+
+                {% elif treatment.department == "ENT" %}
+
+                    <img
+                        src="{% static 'images/ent-treatment.jpg' %}"
+                        alt="ENT treatment"
+                    >
+
+                {% elif treatment.department == "Pulmonology" %}
+
+                    <img
+                        src="{% static 'images/pulmonology-treatment.jpg' %}"
+                        alt="Pulmonology treatment"
+                    >
+
+                {% elif treatment.department == "Endocrinology" %}
+
+                    <img
+                        src="{% static 'images/endocrinology-treatment.jpg' %}"
+                        alt="Endocrinology treatment"
+                    >
+
+                {% elif treatment.department == "Physiotherapy" %}
+
+                    <img
+                        src="{% static 'images/physiotherapy-treatment.jpg' %}"
+                        alt="Physiotherapy treatment"
+                    >
+
+                {% else %}
+
+                    <img
+                        src="{% static 'images/hospital-placeholder.jpg' %}"
+                        alt="Healthcare treatment"
+                    >
+
+                {% endif %}
+
+
+                <span class="department-tag">
+                    {{ treatment.department }}
+                </span>
+
+            </div>
+
+
+            <!-- CARD CONTENT -->
+
+            <div class="treatment-card-content">
+
+                <h3>
+                    {{ treatment.name }}
+                </h3>
+
+                <p class="treatment-description">
+                    {{ treatment.description }}
+                </p>
+
+
+                <!-- COST -->
+
+                <div class="treatment-cost">
+
+                    <div class="info-icon">
+                        <i class="fa-solid fa-indian-rupee-sign"></i>
+                    </div>
+
+                    <div>
+                        <span>Estimated Budget</span>
+
+                        <strong>
+                            ₹{{ treatment.min_cost|floatformat:0 }}
+                            –
+                            ₹{{ treatment.max_cost|floatformat:0 }}
+                        </strong>
+                    </div>
+
+                </div>
+
+
+                <!-- STATS -->
+
+                <div class="treatment-stats">
+
+                    <div>
+
+                        <i class="fa-solid fa-users"></i>
+
+                        <span>
+                            {{ treatment.patients_treated }}
+                        </span>
+
+                        <small>
+                            Patients
+                        </small>
+
+                    </div>
+
+
+                    <div>
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        <span>
+                            {{ treatment.success_rate }}%
+                        </span>
+
+                        <small>
+                            Success
+                        </small>
+
+                    </div>
+
+
+                    <div>
+
+                        <i class="fa-solid fa-chart-simple"></i>
+
+                        <span>
+                            ₹{{ treatment.average_cost|floatformat:0 }}
+                        </span>
+
+                        <small>
+                            Average
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </article>
+
+        {% empty %}
+
+        <div class="no-treatments">
+
+            <i class="fa-solid fa-stethoscope"></i>
+
+            <h2>
+                No Treatments Found
+            </h2>
+
+            <p>
+                Try searching for another treatment or department.
+            </p>
+
+            <a href="{% url 'treatments' %}">
+                View All Treatments
+            </a>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}
